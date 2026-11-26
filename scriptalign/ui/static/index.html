@@ -1,0 +1,380 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ScriptAlign</title>
+<link rel="stylesheet" href="/static/style.css">
+<script>
+  window.SCRIPTALIGN_TOKEN = "__SCRIPTALIGN_TOKEN__";
+  window.SCRIPTALIGN_VERSION = "__SCRIPTALIGN_VERSION__";
+</script>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <span class="mark" aria-hidden="true">
+      <svg viewBox="0 0 32 32" width="30" height="30">
+        <rect x="1" y="1" width="30" height="30" rx="9" fill="url(#g)"/>
+        <path d="M8 12h16M8 16h11M8 20h7" stroke="#06110f" stroke-width="2.6" stroke-linecap="round"/>
+        <defs>
+          <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#5eead4"/>
+            <stop offset="1" stop-color="#38bdf8"/>
+          </linearGradient>
+        </defs>
+      </svg>
+    </span>
+    <div class="brand-text">
+      <h1>ScriptAlign</h1>
+      <p>Verbatim bilingual subtitles · powered by AutoSubs</p>
+    </div>
+  </div>
+  <div class="topbar-side">
+    <span class="badge" id="engine-badge" title="AutoSubs transcription engine">checking AutoSubs…</span>
+    <span class="badge subtle" id="version-badge"></span>
+    <button class="btn ghost small" id="help-btn">Resolve guide</button>
+  </div>
+</header>
+
+<nav class="stepper" id="stepper" aria-label="Steps">
+  <button class="step" data-step="1"><span class="num">1</span> Source</button>
+  <span class="step-line"></span>
+  <button class="step" data-step="2"><span class="num">2</span> Scripts</button>
+  <span class="step-line"></span>
+  <button class="step" data-step="3"><span class="num">3</span> Review</button>
+  <span class="step-line"></span>
+  <button class="step" data-step="4"><span class="num">4</span> Export</button>
+</nav>
+
+<main id="app">
+
+  <!-- ============================== STEP 1 ============================== -->
+  <section class="panel" data-panel="1">
+    <div class="panel-head">
+      <span class="eyebrow">Step 1</span>
+      <h2>Point at the narration and its timings</h2>
+      <p class="lede">AutoSubs listens to the take and writes word-level timings.
+        ScriptAlign times your own script against them — it never rewrites you.</p>
+    </div>
+
+    <div class="grid two">
+      <section class="card">
+        <div class="card-head">
+          <h3>Narration</h3>
+          <span class="pill" id="audio-kind">—</span>
+        </div>
+        <label for="audio-path">Audio or video file</label>
+        <div class="path-field">
+          <input id="audio-path" placeholder="/path/to/narration.wav" spellcheck="false">
+          <button class="btn ghost" data-browse="media" data-target="audio">Browse</button>
+        </div>
+        <p class="meta" id="audio-meta">No file selected.</p>
+      </section>
+
+      <section class="card">
+        <div class="card-head">
+          <h3>AutoSubs timings</h3>
+          <span class="pill" id="timings-state">—</span>
+        </div>
+        <label for="timings-path">JSON (preferred) or an SRT of the narration</label>
+        <div class="path-field">
+          <input id="timings-path" placeholder="narration.json" spellcheck="false">
+          <button class="btn ghost" data-browse="json" data-target="timings">Browse</button>
+        </div>
+        <p class="meta" id="timings-meta">No timings yet. Transcribe below, or reuse an existing JSON.</p>
+      </section>
+    </div>
+
+    <section class="card transcribe">
+      <div class="card-head">
+        <h3>Transcribe with AutoSubs</h3>
+        <span class="pill" id="autosubs-state">—</span>
+      </div>
+      <div class="form-row">
+        <label class="field">Model
+          <select id="model">
+            <option value="large-v3-turbo" selected>large-v3-turbo (recommended)</option>
+            <option value="large-v3">large-v3</option>
+            <option value="medium">medium</option>
+            <option value="small">small</option>
+            <option value="parakeet">parakeet</option>
+            <option value="moonshine-base">moonshine-base</option>
+          </select>
+        </label>
+        <label class="field narrow">Language
+          <input id="lang" value="en" spellcheck="false" title="Leave empty to auto-detect">
+        </label>
+        <label class="check"><input type="checkbox" id="forced" checked>
+          Forced alignment (word refinement)</label>
+        <button class="btn primary" id="transcribe-btn">Transcribe</button>
+      </div>
+      <p class="hint">Runs the <code>autosubs</code> CLI locally. Audio never leaves
+        your machine. The JSON is written next to the media unless you pick another path.</p>
+      <div class="log" id="job-log" hidden>
+        <div class="log-head"><span>AutoSubs log</span><span id="job-state"></span></div>
+        <pre id="job-log-lines"></pre>
+      </div>
+    </section>
+
+    <div class="panel-foot">
+      <span class="foot-note" id="source-foot"></span>
+      <button class="btn primary" data-next="2">Continue to scripts</button>
+    </div>
+  </section>
+
+  <!-- ============================== STEP 2 ============================== -->
+  <section class="panel" data-panel="2">
+    <div class="panel-head">
+      <span class="eyebrow">Step 2</span>
+      <h2>Two scripts, one cue per line</h2>
+      <p class="lede">The pair must have the same number of lines: English line N
+        belongs with Chinese line N. Re-flowing moves breaks only — never a word.</p>
+    </div>
+
+    <div class="grid two">
+      <section class="card">
+        <div class="card-head">
+          <h3>Primary script</h3>
+          <span class="pill" id="primary-lines">—</span>
+        </div>
+        <label for="primary-path">Usually English</label>
+        <div class="path-field">
+          <input id="primary-path" placeholder="english.txt" spellcheck="false">
+          <button class="btn ghost" data-browse="script" data-target="primary">Browse</button>
+        </div>
+        <p class="meta" id="primary-meta">No script selected.</p>
+      </section>
+
+      <section class="card">
+        <div class="card-head">
+          <h3>Second script</h3>
+          <span class="pill" id="secondary-lines">—</span>
+        </div>
+        <label for="secondary-path">Usually Chinese</label>
+        <div class="path-field">
+          <input id="secondary-path" placeholder="chinese.txt" spellcheck="false">
+          <button class="btn ghost" data-browse="script" data-target="secondary">Browse</button>
+        </div>
+        <p class="meta" id="secondary-meta">No script selected.</p>
+      </section>
+    </div>
+
+    <div class="pair-status" id="pair-status">Choose both scripts to check the 1:1 pairing.</div>
+
+    <section class="card">
+      <div class="card-head">
+        <h3>Re-flow for readability <span class="tag optional">optional</span></h3>
+      </div>
+      <p class="hint">Splits long lines at phrase boundaries and pairs the new
+        breaks across both scripts. A verbatim check blocks the write if any
+        character would change. Originals are kept as <code>*.orig.txt</code>.</p>
+      <div class="form-row">
+        <label class="field narrow">Max chars, primary
+          <input id="reflow-max-primary" type="number" min="8" max="120" step="1" value="42">
+        </label>
+        <label class="field narrow">Max chars, second
+          <input id="reflow-max-secondary" type="number" min="8" max="120" step="1" value="20">
+        </label>
+        <label class="field narrow">Min line length
+          <input id="reflow-min-len" type="number" min="0" max="100" step="1" value="18">
+        </label>
+        <button class="btn" id="preview-btn">Preview breaks</button>
+        <button class="btn primary" id="apply-btn">Apply breaks</button>
+      </div>
+      <div id="reflow-summary" class="chips"></div>
+      <div id="reflow-diff" class="reflow-diff"></div>
+    </section>
+
+    <div class="panel-foot">
+      <button class="btn ghost" data-back="1">Back</button>
+      <button class="btn primary" data-next="3">Continue to review</button>
+    </div>
+  </section>
+
+  <!-- ============================== STEP 3 ============================== -->
+  <section class="panel" data-panel="3">
+    <div class="panel-head">
+      <span class="eyebrow">Step 3</span>
+      <h2>Time it, then read it against the take</h2>
+      <p class="lede">One cue per script line. Click a cue to hear it; flags point
+        at lines that are long, fast, or end on a weak word.</p>
+    </div>
+
+    <div class="review-grid">
+      <aside class="review-side">
+        <section class="card">
+          <div class="card-head"><h3>Timing</h3><span class="pill" id="align-state">not run</span></div>
+          <div class="form-grid">
+            <label class="field">Offset (s)<input id="opt-offset" type="number" step="0.1" value="0"></label>
+            <label class="field">Min duration<input id="opt-min-dur" type="number" step="0.1" value="0.8"></label>
+            <label class="field">Gap (s)<input id="opt-gap" type="number" step="0.05" value="0"></label>
+            <label class="field">Hold (s)<input id="opt-hold" type="number" step="0.1" value="1"></label>
+            <label class="field">Linger (s)<input id="opt-linger" type="number" step="0.1" value="0.4"></label>
+          </div>
+          <p class="hint tight">Gap 0 butt-joins cues; any gap shorter than one
+            24 fps frame can flicker.</p>
+          <button class="btn primary wide" id="align-btn">Run alignment</button>
+          <div class="stale-banner" id="stale-banner" hidden>
+            Options changed — re-run alignment to apply them.
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="card-head"><h3>Checks</h3></div>
+          <div id="diagnostics" class="diagnostics">
+            <p class="meta">Align to see diagnostics.</p>
+          </div>
+        </section>
+      </aside>
+
+      <section class="review-main">
+        <section class="card player-card">
+          <div id="player-wrap" class="player-wrap">
+            <div class="player-empty">Choose the narration in Step 1 to preview it here.</div>
+          </div>
+          <div class="wave-wrap" id="wave-wrap" hidden>
+            <canvas id="waveform"></canvas>
+          </div>
+          <div class="player-cue empty" id="player-cue">No cue at this point in the take.</div>
+        </section>
+
+        <section class="card cues-card">
+          <div class="cue-toolbar">
+            <input id="cue-search" class="search" type="search" placeholder="Search cues…" spellcheck="false">
+            <select id="cue-filter">
+              <option value="all">All cues</option>
+              <option value="flagged">Flagged only</option>
+              <option value="over-limit">Over line limit</option>
+              <option value="reading-speed">Too fast to read</option>
+              <option value="dangling">Dangling ending</option>
+            </select>
+            <span class="pill" id="cue-count">0 cues</span>
+          </div>
+          <div class="table-wrap">
+            <table class="cue-table">
+              <thead>
+                <tr>
+                  <th class="c-num">#</th>
+                  <th class="c-time">In</th>
+                  <th class="c-time">Out</th>
+                  <th class="c-dur">Dur</th>
+                  <th>Primary</th>
+                  <th>Second</th>
+                  <th class="c-flags">Flags</th>
+                </tr>
+              </thead>
+              <tbody id="cue-body"></tbody>
+            </table>
+            <div class="table-empty" id="table-empty">Run the alignment to list cues.</div>
+          </div>
+        </section>
+      </section>
+    </div>
+
+    <div class="panel-foot">
+      <button class="btn ghost" data-back="2">Back</button>
+      <button class="btn primary" data-next="4">Continue to export</button>
+    </div>
+  </section>
+
+  <!-- ============================== STEP 4 ============================== -->
+  <section class="panel" data-panel="4">
+    <div class="panel-head">
+      <span class="eyebrow">Step 4</span>
+      <h2>Export Resolve-ready subtitles</h2>
+      <p class="lede">A primary SRT, a second-language SRT, one bilingual SRT for
+        burn-in, and a timing report for review.</p>
+    </div>
+
+    <div class="grid two">
+      <section class="card">
+        <div class="card-head"><h3>Output folder</h3></div>
+        <div class="path-field">
+          <input id="outdir-path" placeholder="Choose a folder" spellcheck="false">
+          <button class="btn ghost" id="outdir-browse">Browse</button>
+        </div>
+        <ul class="file-list" id="export-files"></ul>
+        <button class="btn primary wide" id="export-btn">Export subtitles</button>
+        <p class="meta" id="export-meta">Nothing written yet.</p>
+      </section>
+
+      <section class="card resolve-card">
+        <div class="card-head"><h3>Into DaVinci Resolve</h3></div>
+        <ol class="steps">
+          <li>Set the timeline start timecode to <code>00:00:00:00</code>
+            (or set an offset in Step 3).</li>
+          <li>Media Pool → <em>Import Subtitle</em> → choose
+            <code>bilingual.srt</code> (or the per-language SRT).</li>
+          <li>Select it → <em>Insert Selected Subtitles to Timeline Using Timecode</em>.</li>
+          <li>Style the subtitle track in the Inspector. Pick a font covering
+            both scripts: Noto Sans CJK SC or PingFang SC.</li>
+          <li>Social platforms ignore embedded captions — burn in the bilingual
+            track for Douyin, WeChat Channels and Reels.</li>
+        </ol>
+        <p class="hint">Burn-in renders one track at a time, which is why the
+          bilingual file puts the primary line above the second on each cue.</p>
+      </section>
+    </div>
+
+    <div class="panel-foot">
+      <button class="btn ghost" data-back="3">Back</button>
+      <span class="foot-note">Alignment by ScriptAlign · listening by AutoSubs (MIT)</span>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <span id="footer-version">ScriptAlign</span>
+  <span>Wording is never changed · MIT · built on
+    <a href="https://github.com/tmoroney/auto-subs" target="_blank" rel="noreferrer">AutoSubs</a></span>
+</footer>
+
+<!-- folder / file picker -->
+<dialog id="browser-dialog" class="dialog">
+  <div class="dialog-head">
+    <div>
+      <h3 id="browse-title">Choose a file</h3>
+      <p class="browse-path" id="browse-path"></p>
+    </div>
+    <button class="icon-btn" id="browse-close" aria-label="Close">✕</button>
+  </div>
+  <div class="dialog-tools">
+    <button class="btn ghost small" id="browse-up">↑ Up</button>
+    <button class="btn ghost small" id="browse-home">Home</button>
+    <button class="btn primary small" id="browse-pick-folder" hidden>Use this folder</button>
+  </div>
+  <div class="browse-list" id="browse-list"></div>
+</dialog>
+
+<dialog id="help-dialog" class="dialog help">
+  <div class="dialog-head">
+    <h3>DaVinci Resolve checklist</h3>
+    <button class="icon-btn" id="help-close" aria-label="Close">✕</button>
+  </div>
+  <div class="help-body">
+    <h4>Timecode</h4>
+    <p>The insert uses absolute timecode. Set <code>Project Settings → Master
+      Settings → Start TC</code> to <code>00:00:00:00</code>, or add an offset
+      equal to your timeline start (e.g. <code>3600</code> for
+      <code>01:00:00:00</code>).</p>
+    <h4>Bilingual burn-in</h4>
+    <p>Resolve renders one subtitle track at a time, so use
+      <code>bilingual.srt</code>: it has the primary line on top and the second
+      language beneath on every cue. Style it once at the track level.</p>
+    <h4>Fonts</h4>
+    <p>Use a font that covers both scripts — Noto Sans CJK SC or PingFang SC on
+      macOS. Western-only fonts fall back per glyph and can look uneven.</p>
+    <h4>Delivery</h4>
+    <p>YouTube takes the SRT as a caption file. Douyin, WeChat Channels and
+      Reels ignore embedded captions — burn the bilingual track into the
+      picture for those, and keep a clean master.</p>
+  </div>
+</dialog>
+
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+<script src="/static/app.js"></script>
+</body>
+</html>
