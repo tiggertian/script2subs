@@ -69,6 +69,10 @@ optional UI dependency (recommended):
 python -m pip install -e ".[ui]"      # adds pywebview
 ```
 
+**No install needed.** The CLI and server are stdlib-only, so you can run
+straight from a checkout. On macOS, double-click `ScriptAlign.command` to open
+the dashboard, or run `python3 -m scriptalign ui`.
+
 Without `pywebview`, `scriptalign ui` still works: it looks for a Chrome,
 Chromium, or Edge install and opens a chromeless app window, and falls back to
 your default browser. The server always binds to `127.0.0.1`.
