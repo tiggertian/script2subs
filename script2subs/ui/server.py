@@ -1,4 +1,4 @@
-"""Local HTTP server for the ScriptAlign desktop UI.
+"""Local HTTP server for the Script2Subs desktop UI.
 
 Exposes a small JSON API on 127.0.0.1:
 
@@ -13,7 +13,7 @@ Exposes a small JSON API on 127.0.0.1:
     POST /api/reveal          show a file in the OS file manager
     GET  /api/media           stream the selected audio/video (Range aware)
 
-Every POST needs the per-session token in `X-ScriptAlign-Token`. Requests
+Every POST needs the per-session token in `X-Script2Subs-Token`. Requests
 carrying a foreign `Origin` are rejected.
 """
 
@@ -237,7 +237,7 @@ def _reveal(path):
 
 
 class Handler(BaseHTTPRequestHandler):
-    server_version = "ScriptAlign/" + __version__
+    server_version = "Script2Subs/" + __version__
     protocol_version = "HTTP/1.1"
     state = None  # set by make_server
 
@@ -287,7 +287,7 @@ class Handler(BaseHTTPRequestHandler):
             host = self.headers.get("Host", "")
             if parsed.netloc != host or parsed.scheme not in ("http", "https"):
                 return False
-        token = self.headers.get("X-ScriptAlign-Token", "")
+        token = self.headers.get("X-Script2Subs-Token", "")
         return secrets.compare_digest(token, self.state.token)
 
     # ------------------------------------------------------------------- GET
@@ -320,8 +320,8 @@ class Handler(BaseHTTPRequestHandler):
         path = os.path.join(STATIC_DIR, "index.html")
         with open(path, encoding="utf-8") as f:
             html = f.read()
-        html = html.replace("__SCRIPTALIGN_TOKEN__", self.state.token)
-        html = html.replace("__SCRIPTALIGN_VERSION__", __version__)
+        html = html.replace("__SCRIPT2SUBS_TOKEN__", self.state.token)
+        html = html.replace("__SCRIPT2SUBS_VERSION__", __version__)
         self._send_bytes(html.encode("utf-8"), ctype="text/html; charset=utf-8")
 
     def _serve_static(self, name):

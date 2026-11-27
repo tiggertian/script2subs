@@ -1,5 +1,5 @@
-ScriptAlign
-Copyright (c) 2026 ScriptAlign contributors
+Script2Subs
+Copyright (c) 2026 Script2Subs contributors
 
 Built on AutoSubs
 -----------------
@@ -9,10 +9,10 @@ https://github.com/tmoroney/auto-subs
 
 AutoSubs is MIT licensed (see its repository for the full text).
 
-ScriptAlign invokes the `autosubs` command-line interface and reads the JSON
+Script2Subs invokes the `autosubs` command-line interface and reads the JSON
 word timings that AutoSubs writes. No AutoSubs source code is included in this
-repository. ScriptAlign is an independent project and is not affiliated with,
+repository. Script2Subs is an independent project and is not affiliated with,
 endorsed by, or sponsored by AutoSubs or its authors.
 
 The alignment, script re-flow, bilingual pairing, diagnostics, desktop UI and
-SRT generation in this repository are original to ScriptAlign.
+SRT generation in this repository are original to Script2Subs.

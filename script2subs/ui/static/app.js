@@ -1,10 +1,10 @@
 "use strict";
 
-/* ScriptAlign UI — no framework, no build step. */
+/* Script2Subs UI — no framework, no build step. */
 
 const $ = (sel, root = document) => root.querySelector(sel);
 const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
-const TOKEN = window.SCRIPTALIGN_TOKEN;
+const TOKEN = window.SCRIPT2SUBS_TOKEN;
 
 const ui = {
   data: null,
@@ -29,7 +29,7 @@ async function api(path, { method = "GET", body = null } = {}) {
   const opts = { method, headers: {} };
   if (method !== "GET") {
     opts.headers["Content-Type"] = "application/json";
-    opts.headers["X-ScriptAlign-Token"] = TOKEN;
+    opts.headers["X-Script2Subs-Token"] = TOKEN;
   }
   if (body !== null) opts.body = JSON.stringify(body);
   const res = await fetch(path, opts);
@@ -114,10 +114,10 @@ function render(data) {
   } else {
     badge.textContent = "AutoSubs not on PATH";
     badge.className = "badge warn";
-    badge.title = "Install AutoSubs to transcribe inside ScriptAlign";
+    badge.title = "Install AutoSubs to transcribe inside Script2Subs";
   }
   $("#version-badge").textContent = "v" + d.version;
-  $("#footer-version").textContent = "ScriptAlign " + d.version;
+  $("#footer-version").textContent = "Script2Subs " + d.version;
 
   bindValue("#audio-path", d.paths.audio);
   bindValue("#timings-path", d.paths.timings);
@@ -1089,7 +1089,7 @@ async function init() {
     if (d.result) setStep(3);
     if (d.job && d.job.running) pollJob();
   } catch (err) {
-    toast("Could not reach ScriptAlign: " + err.message, "error");
+    toast("Could not reach Script2Subs: " + err.message, "error");
   }
 }
 

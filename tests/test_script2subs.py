@@ -10,16 +10,16 @@ import unittest
 HERE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, HERE)
 
-from scriptalign.align import align, interpolate
-from scriptalign.cues import line_spans, make_cues
-from scriptalign.diagnostics import cue_flags, summarize
-from scriptalign.errors import ScriptError
-from scriptalign.langs import is_cjk_script, joiner
-from scriptalign.pipeline import Options, align_scripts, export_files, read_pair
-from scriptalign.rebreak import rebreak
-from scriptalign.srt import srt_time, write_srt
-from scriptalign.text import tokenize
-from scriptalign.timings import build_transcript_tokens, parse_json, parse_srt
+from script2subs.align import align, interpolate
+from script2subs.cues import line_spans, make_cues
+from script2subs.diagnostics import cue_flags, summarize
+from script2subs.errors import ScriptError
+from script2subs.langs import is_cjk_script, joiner
+from script2subs.pipeline import Options, align_scripts, export_files, read_pair
+from script2subs.rebreak import rebreak
+from script2subs.srt import srt_time, write_srt
+from script2subs.text import tokenize
+from script2subs.timings import build_transcript_tokens, parse_json, parse_srt
 
 DEMO = os.path.join(HERE, "examples", "demo")
 DEMO_EN = os.path.join(DEMO, "demo_english.txt")

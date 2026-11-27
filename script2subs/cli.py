@@ -1,9 +1,9 @@
 """Command line entry point.
 
-    scriptalign --audio narration.wav
-    scriptalign --timings narration.json
-    scriptalign ui
-    scriptalign reflow --dry-run
+    script2subs --audio narration.wav
+    script2subs --timings narration.json
+    script2subs ui
+    script2subs reflow --dry-run
 
 The flat form (no subcommand) aligns scripts; `ui` and `reflow` are
 convenience entry points for the desktop app and for re-breaking scripts.
@@ -22,16 +22,16 @@ from .tools import reflow as apply_reflow
 EPILOG = """\
 examples:
   # transcribe the narration with AutoSubs, then time the script to it
-  scriptalign --audio narration.wav
+  script2subs --audio narration.wav
 
   # reuse an existing AutoSubs JSON (or any SRT of the narration)
-  scriptalign --timings narration.json
+  script2subs --timings narration.json
 
   # audio starting 1h into the timeline (Resolve TC 01:00:00:00)
-  scriptalign --audio narration.wav --offset 3600
+  script2subs --audio narration.wav --offset 3600
 
   # open the desktop app
-  scriptalign ui
+  script2subs ui
 
 DaVinci Resolve:
   1. Media Pool -> Import Subtitle -> bilingual.srt
@@ -70,7 +70,7 @@ def _add_reflow_args(p):
 
 def build_parser():
     p = argparse.ArgumentParser(
-        prog="scriptalign",
+        prog="script2subs",
         description="Time hand-authored subtitle scripts to narration audio "
                     "using AutoSubs word timings.",
         epilog=EPILOG,
@@ -188,7 +188,7 @@ def align_main(argv):
 
 def reflow_main(argv):
     parser = argparse.ArgumentParser(
-        prog="scriptalign reflow",
+        prog="script2subs reflow",
         description="Re-flow a 1:1 script pair at phrase boundaries. Text is "
                     "never changed; only line breaks move.")
     parser.add_argument("--en", default="english.txt", help="primary script")

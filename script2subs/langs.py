@@ -1,6 +1,6 @@
 """Script detection and per-script readability constants.
 
-ScriptAlign works with any pair of hand-authored scripts. It needs to know
+Script2Subs works with any pair of hand-authored scripts. It needs to know
 whether a script is written with spaces between words (English, Spanish, ...)
 or without (Chinese, Japanese), because that decides how lines are joined,
 where safe break points are, and how fast a cue may be read.

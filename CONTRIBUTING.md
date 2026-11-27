@@ -1,6 +1,6 @@
-# Contributing to ScriptAlign
+# Contributing to Script2Subs
 
-Thanks for helping. ScriptAlign is a small, dependency-free tool, and the
+Thanks for helping. Script2Subs is a small, dependency-free tool, and the
 principles below keep it that way.
 
 ## Ground rules
@@ -30,7 +30,7 @@ python -m unittest discover -s tests -v
 Try the demo end to end:
 
 ```bash
-scriptalign --timings examples/demo/demo.json \
+script2subs --timings examples/demo/demo.json \
   --en examples/demo/demo_english.txt \
   --zh examples/demo/demo_chinese.txt --outdir /tmp/demo-out
 ```
@@ -38,17 +38,17 @@ scriptalign --timings examples/demo/demo.json \
 And the app:
 
 ```bash
-scriptalign ui            # native window / Chrome app / browser
-scriptalign ui --no-window
+script2subs ui            # native window / Chrome app / browser
+script2subs ui --no-window
 ```
 
 ## Where things live
 
-- `scriptalign/pipeline.py` — the shared path both the CLI and UI call.
-- `scriptalign/align.py` — sequence alignment; the heart of the timing.
-- `scriptalign/rebreak.py` and `scriptalign/langs.py` — re-flow, including CJK
+- `script2subs/pipeline.py` — the shared path both the CLI and UI call.
+- `script2subs/align.py` — sequence alignment; the heart of the timing.
+- `script2subs/rebreak.py` and `script2subs/langs.py` — re-flow, including CJK
   rules. Changes here are the easiest to get subtly wrong; add tests.
-- `scriptalign/ui/` — local server (`server.py`), launcher (`app.py`), and the
+- `script2subs/ui/` — local server (`server.py`), launcher (`app.py`), and the
   no-build SPA in `static/`.
 - `tests/` — unit tests plus a live-server integration test.
 
@@ -78,6 +78,6 @@ output, verify it didn't.
 
 ## Attribution
 
-ScriptAlign builds on AutoSubs (MIT). Don't copy AutoSubs source into this
+Script2Subs builds on AutoSubs (MIT). Don't copy AutoSubs source into this
 repository — it's invoked as an external tool. If you add a dependency or borrow
 an algorithm, note its license and add it to [NOTICE](NOTICE).

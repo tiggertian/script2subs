@@ -1,6 +1,6 @@
 #!/bin/bash
-# Build ScriptAlign.app — a macOS bundle that opens the dashboard on
-# double-click and also serves as the `scriptalign` CLI.
+# Build Script2Subs.app — a macOS bundle that opens the dashboard on
+# double-click and also serves as the `script2subs` CLI.
 #
 #   ./packaging/build_app.sh
 #
@@ -25,20 +25,20 @@ fi
 "$VENV/bin/python" -m pip install -r "$ROOT/packaging/requirements-build.txt"
 
 rm -rf "$ROOT/build" "$ROOT/dist"
-"$VENV/bin/pyinstaller" "$ROOT/packaging/ScriptAlign.spec" \
+"$VENV/bin/pyinstaller" "$ROOT/packaging/Script2Subs.spec" \
   --distpath "$ROOT/dist" --workpath "$ROOT/build" --noconfirm
 
-APP="$ROOT/dist/ScriptAlign.app"
+APP="$ROOT/dist/Script2Subs.app"
 # NB: macOS filesystems are case-insensitive, so this wrapper must NOT be
-# named "scriptalign" — that would overwrite "ScriptAlign" (the real binary).
-WRAP="$APP/Contents/MacOS/scriptalign-cli"
+# named "script2subs" — that would overwrite "Script2Subs" (the real binary).
+WRAP="$APP/Contents/MacOS/script2subs-cli"
 cat > "$WRAP" <<'SH'
 #!/bin/bash
-exec "$(cd "$(dirname "$0")" && pwd)/ScriptAlign" "$@"
+exec "$(cd "$(dirname "$0")" && pwd)/Script2Subs" "$@"
 SH
 chmod +x "$WRAP"
 
 echo ">> built: $APP"
 echo ">> GUI:  open \"$APP\""
 echo ">> CLI:  \"$WRAP\" --version"
-echo ">> or:   ln -sf \"$WRAP\" /usr/local/bin/scriptalign"
+echo ">> or:   ln -sf \"$WRAP\" /usr/local/bin/script2subs"

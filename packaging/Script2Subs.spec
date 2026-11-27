@@ -1,5 +1,5 @@
 # -*- mode: python ; coding: utf-8 -*-
-"""PyInstaller spec: build ScriptAlign.app (GUI) that doubles as a CLI.
+"""PyInstaller spec: build Script2Subs.app (GUI) that doubles as a CLI.
 
 Run via packaging/build_app.sh, which supplies the interpreter and paths.
 """
@@ -7,13 +7,13 @@ Run via packaging/build_app.sh, which supplies the interpreter and paths.
 import os
 
 ROOT = os.path.abspath(os.path.join(SPECPATH, ".."))
-STATIC = os.path.join(ROOT, "scriptalign", "ui", "static")
+STATIC = os.path.join(ROOT, "script2subs", "ui", "static")
 
 a = Analysis(
     [os.path.join(SPECPATH, "entry.py")],
     pathex=[ROOT],
     binaries=[],
-    datas=[(STATIC, os.path.join("scriptalign", "ui", "static"))],
+    datas=[(STATIC, os.path.join("script2subs", "ui", "static"))],
     hiddenimports=[
         "webview.platforms.cocoa",
     ],
@@ -31,7 +31,7 @@ exe = EXE(
     a.scripts,
     [],
     exclude_binaries=True,
-    name="ScriptAlign",
+    name="Script2Subs",
     debug=False,
     strip=False,
     upx=False,
@@ -47,19 +47,19 @@ coll = COLLECT(
     a.datas,
     strip=False,
     upx=False,
-    name="ScriptAlign",
+    name="Script2Subs",
 )
 
 app = BUNDLE(
     coll,
-    name="ScriptAlign.app",
+    name="Script2Subs.app",
     icon=None,
-    bundle_identifier="app.scriptalign.ScriptAlign",
+    bundle_identifier="app.script2subs.Script2Subs",
     info_plist={
-        "CFBundleName": "ScriptAlign",
-        "CFBundleDisplayName": "ScriptAlign",
-        "CFBundleShortVersionString": "0.1.0",
-        "CFBundleVersion": "0.1.0",
+        "CFBundleName": "Script2Subs",
+        "CFBundleDisplayName": "Script2Subs",
+        "CFBundleShortVersionString": "0.2.0",
+        "CFBundleVersion": "0.2.0",
         "LSMinimumSystemVersion": "11.0",
         "NSHighResolutionCapable": True,
         "NSHumanReadableCopyright": "MIT License",

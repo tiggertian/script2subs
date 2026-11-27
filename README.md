@@ -1,8 +1,8 @@
-# ScriptAlign
+# Script2Subs
 
 **Verbatim bilingual subtitles, timed to your narration with AutoSubs.**
 
-You write the script. You record the narration. ScriptAlign listens to the
+You write the script. You record the narration. Script2Subs listens to the
 recording with [AutoSubs](https://github.com/tmoroney/auto-subs), lines your
 hand-authored script up against the word-level timings, and exports subtitles
 that say exactly what you wrote — in one language or two — as
@@ -20,7 +20,7 @@ DaVinci Resolve-ready SRT files.
   cue, flags lines that are too fast or too long, and lets you tweak timing
   without leaving the window.
 
-ScriptAlign is an independent project built on AutoSubs' command-line tool. It
+Script2Subs is an independent project built on AutoSubs' command-line tool. It
 calls `autosubs`, reads the JSON word timings AutoSubs writes, and does all of
 the alignment, re-flow, pairing, diagnostics, UI, and SRT generation itself. See
 [NOTICE](NOTICE).
@@ -33,12 +33,12 @@ the alignment, re-flow, pairing, diagnostics, UI, and SRT generation itself. See
 narration audio ──▶ autosubs (whisper + MMS forced alignment) ──▶ word timings (JSON)
                                                                         │
 your primary script ─┐                                                  ▼
-your secondary script ┴──▶ ScriptAlign ── sequence-align ──▶ time each line ──▶ SRT ×3 + report
+your secondary script ┴──▶ Script2Subs ── sequence-align ──▶ time each line ──▶ SRT ×3 + report
 ```
 
 1. **AutoSubs listens.** It transcribes the narration and, with
    `--forced-alignment`, refines every word to a start and end time.
-2. **ScriptAlign aligns.** Your script's words are matched against the
+2. **Script2Subs aligns.** Your script's words are matched against the
    transcript with a global (Needleman–Wunsch) sequence alignment. Exact matches
    anchor the timing; words that were paraphrased or mis-heard are interpolated
    between their neighbours.
@@ -51,18 +51,37 @@ your secondary script ┴──▶ ScriptAlign ── sequence-align ──▶ t
 
 ## Install
 
-ScriptAlign needs **Python 3.10+** and, for transcription, the
-[AutoSubs](https://github.com/tmoroney/auto-subs) CLI on your `PATH`.
-If you already have AutoSubs word timings (or any SRT of the narration), you can
-use ScriptAlign without installing AutoSubs at all.
+### macOS app (no Python required)
+
+Download the latest `Script2Subs-*.dmg` from the
+[Releases](https://github.com/tiggertian/script2subs/releases) page, open it, and
+drag **Script2Subs** to Applications. It opens the dashboard, and the same
+bundle exposes the CLI:
 
 ```bash
-git clone <your-repo-url> scriptalign
-cd scriptalign
+ln -sf "/Applications/Script2Subs.app/Contents/MacOS/script2subs-cli" /usr/local/bin/script2subs
+script2subs --version
+```
+
+The build is unsigned, so the first launch needs right-click → **Open** (or
+`xattr -dr com.apple.quarantine /Applications/Script2Subs.app`). It bundles
+Python and the frontend but not AutoSubs — install AutoSubs separately, or feed
+it existing timings JSON/SRT.
+
+### From source or PyPI
+
+Script2Subs needs **Python 3.10+** and, for transcription, the
+[AutoSubs](https://github.com/tmoroney/auto-subs) CLI on your `PATH`.
+If you already have AutoSubs word timings (or any SRT of the narration), you can
+use Script2Subs without installing AutoSubs at all.
+
+```bash
+git clone <your-repo-url> script2subs
+cd script2subs
 python -m pip install -e .
 ```
 
-That installs the `scriptalign` command. For the desktop window, install the
+That installs the `script2subs` command. For the desktop window, install the
 optional UI dependency (recommended):
 
 ```bash
@@ -70,10 +89,10 @@ python -m pip install -e ".[ui]"      # adds pywebview
 ```
 
 **No install needed.** The CLI and server are stdlib-only, so you can run
-straight from a checkout. On macOS, double-click `ScriptAlign.command` to open
-the dashboard, or run `python3 -m scriptalign ui`.
+straight from a checkout. On macOS, double-click `Script2Subs.command` to open
+the dashboard, or run `python3 -m script2subs ui`.
 
-Without `pywebview`, `scriptalign ui` still works: it looks for a Chrome,
+Without `pywebview`, `script2subs ui` still works: it looks for a Chrome,
 Chromium, or Edge install and opens a chromeless app window, and falls back to
 your default browser. The server always binds to `127.0.0.1`.
 
@@ -81,13 +100,13 @@ your default browser. The server always binds to `127.0.0.1`.
 
 ```bash
 # 1. time your scripts against the narration (transcribes with AutoSubs)
-scriptalign --audio narration.wav
+script2subs --audio narration.wav
 
 # 2. or reuse AutoSubs JSON / any SRT you already have
-scriptalign --timings narration.json
+script2subs --timings narration.json
 
 # 3. open the desktop app
-scriptalign ui
+script2subs ui
 ```
 
 Defaults: primary `english.txt`, secondary `chinese.txt`, output `.`. Override
@@ -107,29 +126,29 @@ You get four files:
 - Two plain-text files, one line per cue.
 - They must have **exactly the same number of lines** — line *N* in one is line
   *N* in the other. Blank lines are dropped, so leave no gaps in either file.
-- Write the text the way you want it to read on screen. ScriptAlign will not
+- Write the text the way you want it to read on screen. Script2Subs will not
   change a single character of it. If a re-flow step would, it refuses.
 
-If the line counts differ, ScriptAlign stops with a message telling you which
+If the line counts differ, Script2Subs stops with a message telling you which
 file has how many lines.
 
 ## Re-flowing long lines
 
-Aligned scripts often have lines too long to read comfortably. `scriptalign
+Aligned scripts often have lines too long to read comfortably. `script2subs
 reflow` re-breaks both files at phrase boundaries — **without changing the
 text** — and writes `.orig` backups the first time. Preview it before writing:
 
 ```bash
-scriptalign reflow --dry-run          # show what would change
-scriptalign reflow                    # apply, keeping .orig copies
-scriptalign reflow --max-chars 38 --max-chars-secondary 18 --min-len 16
+script2subs reflow --dry-run          # show what would change
+script2subs reflow                    # apply, keeping .orig copies
+script2subs reflow --max-chars 38 --max-chars-secondary 18 --min-len 16
 ```
 
 The re-flow keeps every character: it strips whitespace and compares the
 original and re-broken text, and aborts if anything would change. For CJK
 scripts it wraps by character at sentence and clause punctuation; for
 space-delimited scripts it wraps at word boundaries. You can also do this as
-part of alignment with `scriptalign align --rebreak`.
+part of alignment with `script2subs align --rebreak`.
 
 ## Diagnostics
 
@@ -180,7 +199,7 @@ look across platforms.
 
 ## The desktop app
 
-`scriptalign ui` opens a four-step workflow in a native window:
+`script2subs ui` opens a four-step workflow in a native window:
 
 1. **Source** — pick the narration and the AutoSubs timings. Don't have
    timings yet? Transcribe from the app: choose a model and language, run it,
@@ -202,7 +221,7 @@ need a per-session token, and the origin is checked. Useful flags:
 No narration handy? The repo ships a tiny synthetic example:
 
 ```bash
-scriptalign --timings examples/demo/demo.json \
+script2subs --timings examples/demo/demo.json \
   --en examples/demo/demo_english.txt \
   --zh examples/demo/demo_chinese.txt \
   --outdir /tmp/demo-out
@@ -215,7 +234,7 @@ is checked in.
 ## Project layout
 
 ```
-scriptalign/
+script2subs/
   cli.py          command line entry point (align, reflow, ui)
   pipeline.py     shared alignment pipeline used by the CLI and UI
   align.py        Needleman–Wunsch sequence alignment + interpolation
@@ -235,18 +254,22 @@ tests/            unit and integration tests
 
 ## Packaging a macOS app
 
-`packaging/build_app.sh` builds `dist/ScriptAlign.app` with PyInstaller. The
-bundle opens the dashboard on double-click **and** works as the `scriptalign`
+`packaging/build_app.sh` builds `dist/Script2Subs.app` with PyInstaller. The
+bundle opens the dashboard on double-click **and** works as the `script2subs`
 CLI — no Python needed on the target machine:
 
 ```bash
-./packaging/build_app.sh                  # build dist/ScriptAlign.app
-open "dist/ScriptAlign.app"               # GUI dashboard
-dist/ScriptAlign.app/Contents/MacOS/scriptalign-cli --version   # CLI
+./packaging/build_app.sh                  # build dist/Script2Subs.app
+open "dist/Script2Subs.app"               # GUI dashboard
+dist/Script2Subs.app/Contents/MacOS/script2subs-cli --version   # CLI
 
 # optional: put the CLI on your PATH
-ln -sf "$PWD/dist/ScriptAlign.app/Contents/MacOS/scriptalign-cli" /usr/local/bin/scriptalign
+ln -sf "$PWD/dist/Script2Subs.app/Contents/MacOS/script2subs-cli" /usr/local/bin/script2subs
 ```
+
+For release artifacts, run `./packaging/make_dist.sh` — it builds the app and
+writes a DMG (drag-to-Applications installer) plus a `.zip` under `dist/`, named
+with the version and architecture. Attach those to a GitHub release.
 
 The build defaults to `python3.14` (override with `PYTHON=/path/to/python3.14`)
 and installs PyInstaller + pywebview into `.build-venv/`. The bundle includes
@@ -267,7 +290,7 @@ align → export). CI runs it on Python 3.10–3.13.
 
 ## License and attribution
 
-MIT — see [LICENSE](LICENSE). ScriptAlign is built on
+MIT — see [LICENSE](LICENSE). Script2Subs is built on
 [AutoSubs](https://github.com/tmoroney/auto-subs) by tmoroney and contributors
 (MIT); it invokes the AutoSubs CLI and reads its JSON output, and includes no
 AutoSubs source. See [NOTICE](NOTICE).

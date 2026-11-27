@@ -13,7 +13,7 @@ import wave
 HERE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, HERE)
 
-from scriptalign.ui.server import AppState, make_server
+from script2subs.ui.server import AppState, make_server
 
 DEMO = os.path.join(HERE, "examples", "demo")
 DEMO_EN = os.path.join(DEMO, "demo_english.txt")
@@ -60,7 +60,7 @@ class ServerTests(unittest.TestCase):
     def post(self, path, body, token=True, origin=None):
         headers = {"Content-Type": "application/json"}
         if token:
-            headers["X-ScriptAlign-Token"] = self.state.token
+            headers["X-Script2Subs-Token"] = self.state.token
         if origin:
             headers["Origin"] = origin
         req = urllib.request.Request(
@@ -83,7 +83,7 @@ class ServerTests(unittest.TestCase):
         status, _, body = self.get("/")
         html = body.decode("utf-8")
         self.assertEqual(status, 200)
-        self.assertIn("ScriptAlign", html)
+        self.assertIn("Script2Subs", html)
         self.assertIn(self.state.token, html)
 
     def test_state_reports_files(self):

@@ -1,4 +1,4 @@
-"""Launch the ScriptAlign desktop window.
+"""Launch the Script2Subs desktop window.
 
 Order of preference:
 1. pywebview (a native webview window), if installed;
@@ -50,7 +50,7 @@ def _open_pywebview(url):
         return False, "pywebview not installed (%s)" % exc
     try:
         webview.create_window(
-            "ScriptAlign", url, width=1320, height=900, min_size=(1024, 700),
+            "Script2Subs", url, width=1320, height=900, min_size=(1024, 700),
             background_color="#0a0c10")
         webview.start()
         return True, "pywebview"
@@ -68,8 +68,8 @@ def _wait_forever():
 
 def main(argv=None):
     parser = argparse.ArgumentParser(
-        prog="scriptalign ui",
-        description="Open the ScriptAlign desktop app for the current folder.")
+        prog="script2subs ui",
+        description="Open the Script2Subs desktop app for the current folder.")
     parser.add_argument("--host", default="127.0.0.1",
                         help="bind address (default: 127.0.0.1 only)")
     parser.add_argument("--port", type=int, default=0,
@@ -90,7 +90,7 @@ def main(argv=None):
 
     engine = "AutoSubs found" if shutil.which("autosubs") else \
         "AutoSubs not on PATH (install it to transcribe)"
-    print("ScriptAlign %s — %s" % (state.snapshot()["version"], engine))
+    print("Script2Subs %s — %s" % (state.snapshot()["version"], engine))
     print("serving %s  (Ctrl+C to quit)" % url)
 
     try:
