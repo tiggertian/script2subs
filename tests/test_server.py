@@ -14,11 +14,7 @@ HERE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, HERE)
 
 from script2subs.ui.server import AppState, make_server
-
-DEMO = os.path.join(HERE, "examples", "demo")
-DEMO_EN = os.path.join(DEMO, "demo_english.txt")
-DEMO_ZH = os.path.join(DEMO, "demo_chinese.txt")
-DEMO_JSON = os.path.join(DEMO, "demo.json")
+from tests.fixtures import write_demo
 
 
 class ServerTests(unittest.TestCase):
@@ -32,12 +28,13 @@ class ServerTests(unittest.TestCase):
             w.setframerate(8000)
             w.writeframes(b"\x00\x00" * 8000)
 
+        en, zh, timings = write_demo(os.path.join(cls.tmp, "scripts"))
         cls.state = AppState()
         cls.state.paths.update({
             "audio": cls.wav,
-            "timings": DEMO_JSON,
-            "primary": DEMO_EN,
-            "secondary": DEMO_ZH,
+            "timings": timings,
+            "primary": en,
+            "secondary": zh,
         })
         cls.state.outdir = cls.tmp
         cls.server = make_server(cls.state, port=0)
@@ -107,13 +104,14 @@ class ServerTests(unittest.TestCase):
         self.assertEqual(status, 400)
         self.assertIn("not found", json.loads(body)["error"])
 
-    def test_browse_lists_demo_scripts(self):
+    def test_browse_lists_script_files(self):
+        scripts_dir = os.path.dirname(self.state.paths["primary"])
         _, _, body = self.get(
-            "/api/browse?path=%s&kind=script" % urllib.request.quote(DEMO))
+            "/api/browse?path=%s&kind=script" % urllib.request.quote(scripts_dir))
         data = json.loads(body)
         names = {f["name"] for f in data["files"]}
-        self.assertIn("demo_english.txt", names)
-        self.assertIn("demo_chinese.txt", names)
+        self.assertIn("english.txt", names)
+        self.assertIn("chinese.txt", names)
 
     def test_align_then_export(self):
         status, _, body = self.post("/api/align", {})

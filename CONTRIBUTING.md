@@ -27,15 +27,8 @@ python -m pip install -e ".[dev]"
 python -m unittest discover -s tests -v
 ```
 
-Try the demo end to end:
-
-```bash
-script2subs --timings examples/demo/demo.json \
-  --en examples/demo/demo_english.txt \
-  --zh examples/demo/demo_chinese.txt --outdir /tmp/demo-out
-```
-
-And the app:
+The test suite generates its own synthetic fixtures — no example files are
+checked in. And the app:
 
 ```bash
 script2subs ui            # native window / Chrome app / browser

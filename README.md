@@ -222,21 +222,6 @@ It's a local-only app: the server binds to `127.0.0.1`, state-changing requests
 need a per-session token, and the origin is checked. Useful flags:
 `--no-window` (headless), `--browser`, `--port N`, `--project DIR`.
 
-## Demo
-
-No narration handy? The repo ships a tiny synthetic example:
-
-```bash
-script2subs --timings examples/demo/demo.json \
-  --en examples/demo/demo_english.txt \
-  --zh examples/demo/demo_chinese.txt \
-  --outdir /tmp/demo-out
-```
-
-It produces eight cues at 100% word match. The client narration and generated
-deliverables in the repo root are intentionally ignored by git — only the demo
-is checked in.
-
 ## Project layout
 
 ```
@@ -254,8 +239,7 @@ script2subs/
   tools.py        reflow preview/apply with the verbatim guarantee
   errors.py       user-facing error type
   ui/             local HTTP server, desktop launcher, static SPA
-examples/demo/    synthetic scripts + timings for the docs and CI
-tests/            unit and integration tests
+tests/            unit and integration tests (fixtures generated at runtime)
 ```
 
 ## Packaging a macOS app

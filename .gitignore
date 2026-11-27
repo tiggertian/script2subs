@@ -13,8 +13,7 @@ venv/
 # OS
 .DS_Store
 
-# Client narration and generated deliverables stay local. The demo in
-# examples/demo/ is the checked-in sample.
+# Client narration and generated deliverables stay local.
 /english.txt
 /english.orig.txt
 /chinese.txt

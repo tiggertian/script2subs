@@ -20,11 +20,7 @@ from script2subs.rebreak import rebreak
 from script2subs.srt import srt_time, write_srt
 from script2subs.text import tokenize
 from script2subs.timings import build_transcript_tokens, parse_json, parse_srt
-
-DEMO = os.path.join(HERE, "examples", "demo")
-DEMO_EN = os.path.join(DEMO, "demo_english.txt")
-DEMO_ZH = os.path.join(DEMO, "demo_chinese.txt")
-DEMO_JSON = os.path.join(DEMO, "demo.json")
+from tests.fixtures import write_demo
 
 
 def whisper_json(segments, original=None):
@@ -182,8 +178,9 @@ class DiagnosticsTests(unittest.TestCase):
 
 class PipelineTests(unittest.TestCase):
     def test_demo_end_to_end_and_export(self):
-        primary, secondary = read_pair(DEMO_EN, DEMO_ZH)
-        result = align_scripts(primary, secondary, DEMO_JSON, Options())
+        en, zh, timings = write_demo(tempfile.mkdtemp())
+        primary, secondary = read_pair(en, zh)
+        result = align_scripts(primary, secondary, timings, Options())
         self.assertEqual(result["summary"]["cues"], 8)
         self.assertEqual(result["summary"]["match_pct"], 100.0)
         self.assertEqual(len(result["cues"]), 8)
@@ -191,7 +188,7 @@ class PipelineTests(unittest.TestCase):
         self.assertTrue(result["summary"]["secondary_cjk"] is True)
 
         out = tempfile.mkdtemp()
-        files = export_files(result, DEMO_EN, DEMO_ZH, out)
+        files = export_files(result, en, zh, out)
         self.assertEqual(len(files), 4)
         for path in files:
             self.assertTrue(os.path.isfile(path))
