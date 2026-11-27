@@ -33,7 +33,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import parse_qs, urlparse
 
 from .. import __version__
-from ..autosubs import autosubs_command, find_autosubs
+from ..autosubs import autosubs_command, autosubs_env, find_autosubs
 from ..errors import ScriptError
 from ..langs import is_cjk_script
 from ..pipeline import Options, align_scripts, export_files, read_pair
@@ -132,7 +132,7 @@ class Job:
         try:
             proc = subprocess.Popen(
                 command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
-                text=True, bufsize=1)
+                text=True, bufsize=1, env=autosubs_env())
             for line in proc.stdout:
                 self._append(line)
             code = proc.wait()

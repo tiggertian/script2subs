@@ -275,10 +275,12 @@ To embed AutoSubs so the app can transcribe with no separate install, pass
 BUNDLE_AUTOSUBS=1 ./packaging/build_app.sh    # embed it in the .app
 ```
 
-This adds roughly 150 MB. The bundled `autosubs` binary is found automatically
-(you can override the path with `AUTOSUBS_BIN`). Models are **not** bundled;
-AutoSubs downloads them on first use. **Licensing:** AutoSubs itself is MIT, but
-its optional MMS forced-alignment weights are **CC BY-NC 4.0** (non-commercial)
+This embeds the AutoSubs **CLI** — the `autosubs` and `ffmpeg` binaries go into
+`Contents/Resources/bin` (about 136 MB), not the whole GUI app — and ships the
+MIT notices for the bundled components. The binary is found automatically (you
+can override the path with `AUTOSUBS_BIN`). Models are **not** bundled; AutoSubs
+downloads them on first use. **Licensing:** AutoSubs itself is MIT, but its
+optional MMS forced-alignment weights are **CC BY-NC 4.0** (non-commercial)
 — do not ship that variant commercially.
 
 ## Development

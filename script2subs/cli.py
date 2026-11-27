@@ -15,7 +15,7 @@ import subprocess
 import sys
 
 from . import __version__
-from .autosubs import autosubs_command
+from .autosubs import autosubs_command, autosubs_env
 from .errors import ScriptError
 from .pipeline import Options, align_scripts, export_files, read_pair
 from .tools import reflow as apply_reflow
@@ -123,7 +123,7 @@ def ensure_transcript(args):
         cmd.append("--forced-alignment")
     print("transcribing with AutoSubs (%s)..." % args.model)
     try:
-        subprocess.run(cmd, check=True)
+        subprocess.run(cmd, check=True, env=autosubs_env())
     except FileNotFoundError:
         raise ScriptError(
             "autosubs not found on PATH; install AutoSubs "

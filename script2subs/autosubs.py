@@ -2,8 +2,10 @@
 
 AutoSubs is an external MIT project; nothing here imports it. We only find the
 ``autosubs`` executable to run headlessly. When Script2Subs is packaged as a
-macOS app, an ``AutoSubs.app`` copied into ``Contents/Resources`` is used
-automatically (see packaging/build_app.sh, BUNDLE_AUTOSUBS=1).
+macOS app with BUNDLE_AUTOSUBS=1, the ``autosubs`` and ``ffmpeg`` binaries are
+copied into ``Contents/Resources/bin`` and used automatically (see
+packaging/build_app.sh). An ``AutoSubs.app`` placed in ``Contents/Resources``
+is also honored.
 """
 
 import os
@@ -39,3 +41,18 @@ def find_autosubs():
 def autosubs_command():
     """The path to execute, or the bare name so the OS reports a clear error."""
     return find_autosubs() or _BIN
+
+
+def autosubs_env():
+    """Environment for running AutoSubs, with its directory on PATH.
+
+    When AutoSubs is bundled we drop ``autosubs`` and its sibling ``ffmpeg``
+    into the app's ``Resources/bin``; prepending that directory lets the CLI
+    find ``ffmpeg`` (and any other sidecars) the same way the stock app does.
+    """
+    env = dict(os.environ)
+    binary = find_autosubs()
+    if binary and os.path.isabs(binary):
+        folder = os.path.dirname(binary)
+        env["PATH"] = folder + os.pathsep + env.get("PATH", "")
+    return env

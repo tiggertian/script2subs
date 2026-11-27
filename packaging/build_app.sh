@@ -41,12 +41,21 @@ chmod +x "$WRAP"
 
 if [ "${BUNDLE_AUTOSUBS:-0}" = "1" ]; then
   "$ROOT/packaging/fetch_autosubs.sh"
+  SRC="$ROOT/.cache/autosubs/AutoSubs.app/Contents/MacOS"
   RES="$APP/Contents/Resources"
-  mkdir -p "$RES"
-  rm -rf "$RES/AutoSubs.app"
-  cp -R "$ROOT/.cache/autosubs/AutoSubs.app" "$RES/AutoSubs.app"
-  echo ">> bundled AutoSubs.app ($(du -sh "$RES/AutoSubs.app" | cut -f1)); models download on first use"
-  echo "   NOTE: MMS forced-alignment weights are CC BY-NC 4.0 (non-commercial)."
+  BIN="$RES/bin"
+  mkdir -p "$BIN"
+  # Embed just the CLI (+ ffmpeg sidecar), not the whole AutoSubs GUI app.
+  cp -f "$SRC/autosubs" "$BIN/autosubs"; chmod +x "$BIN/autosubs"
+  if [ -f "$SRC/ffmpeg" ]; then
+    cp -f "$SRC/ffmpeg" "$BIN/ffmpeg"; chmod +x "$BIN/ffmpeg"
+  fi
+  # Redistribution requires the MIT notices for the bundled components.
+  cp -f "$ROOT/packaging/AutoSubs-LICENSE" "$RES/AutoSubs-LICENSE.txt"
+  cp -f "$ROOT/LICENSE" "$RES/LICENSE.txt"
+  cp -f "$ROOT/NOTICE" "$RES/NOTICE.txt"
+  echo ">> bundled AutoSubs CLI ($(du -sh "$BIN" | cut -f1)); models download on first use"
+  echo "   NOTE: MMS forced-alignment weights are CC BY-NC 4.0 (non-commercial) and are not bundled."
 fi
 
 echo ">> built: $APP"
