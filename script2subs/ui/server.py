@@ -33,6 +33,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import parse_qs, urlparse
 
 from .. import __version__
+from ..autosubs import autosubs_command, find_autosubs
 from ..errors import ScriptError
 from ..langs import is_cjk_script
 from ..pipeline import Options, align_scripts, export_files, read_pair
@@ -210,7 +211,7 @@ class AppState:
                 "result": self.result,
                 "job": self.job.snapshot(),
                 "engine": {
-                    "autosubs": shutil.which("autosubs"),
+                    "autosubs": find_autosubs(),
                     "platform": sys.platform,
                 },
             }
@@ -594,7 +595,7 @@ class Handler(BaseHTTPRequestHandler):
         else:
             json_path = os.path.splitext(audio)[0] + ".json"
 
-        autosubs = shutil.which("autosubs") or "autosubs"
+        autosubs = autosubs_command()
         cmd = [autosubs, audio, "-m", model, "-f", "json", "-o", json_path]
         if lang:
             cmd += ["-l", lang]

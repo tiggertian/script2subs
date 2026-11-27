@@ -18,6 +18,7 @@ import threading
 import time
 import webbrowser
 
+from ..autosubs import find_autosubs
 from .server import AppState, make_server
 
 
@@ -88,7 +89,7 @@ def main(argv=None):
     url = "http://%s:%d/" % (host, port)
     threading.Thread(target=server.serve_forever, daemon=True).start()
 
-    engine = "AutoSubs found" if shutil.which("autosubs") else \
+    engine = "AutoSubs found" if find_autosubs() else \
         "AutoSubs not on PATH (install it to transcribe)"
     print("Script2Subs %s — %s" % (state.snapshot()["version"], engine))
     print("serving %s  (Ctrl+C to quit)" % url)

@@ -7,6 +7,7 @@
 # Env overrides:
 #   PYTHON=/opt/homebrew/bin/python3.14   interpreter used for the build
 #   BUILD_VENV=/tmp/sa-build              where to put the build venv
+#   BUNDLE_AUTOSUBS=1                     embed the official AutoSubs app (~150 MB)
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
@@ -37,6 +38,16 @@ cat > "$WRAP" <<'SH'
 exec "$(cd "$(dirname "$0")" && pwd)/Script2Subs" "$@"
 SH
 chmod +x "$WRAP"
+
+if [ "${BUNDLE_AUTOSUBS:-0}" = "1" ]; then
+  "$ROOT/packaging/fetch_autosubs.sh"
+  RES="$APP/Contents/Resources"
+  mkdir -p "$RES"
+  rm -rf "$RES/AutoSubs.app"
+  cp -R "$ROOT/.cache/autosubs/AutoSubs.app" "$RES/AutoSubs.app"
+  echo ">> bundled AutoSubs.app ($(du -sh "$RES/AutoSubs.app" | cut -f1)); models download on first use"
+  echo "   NOTE: MMS forced-alignment weights are CC BY-NC 4.0 (non-commercial)."
+fi
 
 echo ">> built: $APP"
 echo ">> GUI:  open \"$APP\""

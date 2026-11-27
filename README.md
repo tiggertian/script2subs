@@ -64,9 +64,15 @@ script2subs --version
 ```
 
 The build is unsigned, so the first launch needs right-click → **Open** (or
-`xattr -dr com.apple.quarantine /Applications/Script2Subs.app`). It bundles
-Python and the frontend but not AutoSubs — install AutoSubs separately, or feed
-it existing timings JSON/SRT.
+`xattr -dr com.apple.quarantine /Applications/Script2Subs.app`). The standard
+build bundles Python and the frontend but not AutoSubs — install AutoSubs
+separately, or feed it existing timings JSON/SRT.
+
+Some releases also ship a **with-AutoSubs** variant (filename contains
+`with-AutoSubs`, about 150 MB larger) that includes the AutoSubs CLI, so
+transcription works with no separate install. Transcription models still
+download on first use. Note that AutoSubs' optional MMS forced-alignment
+weights are licensed **CC BY-NC 4.0 (non-commercial)**; see [NOTICE](NOTICE).
 
 ### From source or PyPI
 
@@ -276,6 +282,20 @@ and installs PyInstaller + pywebview into `.build-venv/`. The bundle includes
 Python and the `ui/static` frontend, but **not** AutoSubs — install AutoSubs
 separately to transcribe. The app is unsigned; to share it, sign and notarize
 it with your Developer ID.
+
+To embed AutoSubs so the app can transcribe with no separate install, pass
+`BUNDLE_AUTOSUBS=1`:
+
+```bash
+./packaging/fetch_autosubs.sh                 # download AutoSubs into .cache/ (once)
+BUNDLE_AUTOSUBS=1 ./packaging/build_app.sh    # embed it in the .app
+```
+
+This adds roughly 150 MB. The bundled `autosubs` binary is found automatically
+(you can override the path with `AUTOSUBS_BIN`). Models are **not** bundled;
+AutoSubs downloads them on first use. **Licensing:** AutoSubs itself is MIT, but
+its optional MMS forced-alignment weights are **CC BY-NC 4.0** (non-commercial)
+— do not ship that variant commercially.
 
 ## Development
 

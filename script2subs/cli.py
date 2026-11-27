@@ -15,6 +15,7 @@ import subprocess
 import sys
 
 from . import __version__
+from .autosubs import autosubs_command
 from .errors import ScriptError
 from .pipeline import Options, align_scripts, export_files, read_pair
 from .tools import reflow as apply_reflow
@@ -115,7 +116,7 @@ def ensure_transcript(args):
         print("reusing transcript %s" % json_path)
         return json_path
 
-    cmd = ["autosubs", audio, "-m", args.model, "-f", "json", "-o", json_path]
+    cmd = [autosubs_command(), audio, "-m", args.model, "-f", "json", "-o", json_path]
     if args.lang:
         cmd += ["-l", args.lang]
     if not args.no_forced_alignment:

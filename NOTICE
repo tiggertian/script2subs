@@ -16,3 +16,13 @@ endorsed by, or sponsored by AutoSubs or its authors.
 
 The alignment, script re-flow, bilingual pairing, diagnostics, desktop UI and
 SRT generation in this repository are original to Script2Subs.
+
+Optional AutoSubs bundle
+------------------------
+Release builds are normally shipped without AutoSubs. A separate "with-AutoSubs"
+variant embeds the official AutoSubs app (MIT) so transcription works out of the
+box. Transcription models are downloaded by AutoSubs on first use and are subject
+to their own licenses. In particular, AutoSubs' optional MMS forced-alignment
+weights are licensed CC BY-NC 4.0 (non-commercial); they are never bundled here
+and are downloaded by AutoSubs only when forced alignment is used. Do not
+distribute that variant for commercial use.
