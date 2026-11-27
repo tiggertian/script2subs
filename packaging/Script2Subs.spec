@@ -58,8 +58,8 @@ app = BUNDLE(
     info_plist={
         "CFBundleName": "Script2Subs",
         "CFBundleDisplayName": "Script2Subs",
-        "CFBundleShortVersionString": "0.2.0",
-        "CFBundleVersion": "0.2.0",
+        "CFBundleShortVersionString": "0.2.1",
+        "CFBundleVersion": "0.2.1",
         "LSMinimumSystemVersion": "11.0",
         "NSHighResolutionCapable": True,
         "NSHumanReadableCopyright": "MIT License",
