@@ -63,16 +63,23 @@ ln -sf "/Applications/Script2Subs.app/Contents/MacOS/script2subs-cli" /usr/local
 script2subs --version
 ```
 
-The build is unsigned, so the first launch needs right-click → **Open** (or
-`xattr -dr com.apple.quarantine /Applications/Script2Subs.app`). The standard
-build bundles Python and the frontend but not AutoSubs — install AutoSubs
-separately, or feed it existing timings JSON/SRT.
+The build is not yet notarized, so macOS blocks the first launch. Clear the
+quarantine flag once, then open it:
 
-Some releases also ship a **with-AutoSubs** variant (filename contains
-`with-AutoSubs`, about 150 MB larger) that includes the AutoSubs CLI, so
-transcription works with no separate install. Transcription models still
-download on first use. Note that AutoSubs' optional MMS forced-alignment
-weights are licensed **CC BY-NC 4.0 (non-commercial)**; see [NOTICE](NOTICE).
+```bash
+xattr -dr com.apple.quarantine "/Applications/Script2Subs.app"
+```
+
+(Right-click → **Open** also works if you see "unidentified developer". If
+macOS says the app **"is damaged,"** that's the same quarantine issue, not a
+broken download — the command above fixes it.) The standard build bundles
+Python and the frontend but not AutoSubs — install AutoSubs separately, or feed
+it existing timings JSON/SRT.
+
+You can also build with `BUNDLE_AUTOSUBS=1` to embed the AutoSubs CLI (roughly
+136 MB larger), so transcription works with no separate install. Models still
+download on first use, and AutoSubs' optional MMS forced-alignment weights are
+**CC BY-NC 4.0 (non-commercial)**; see [NOTICE](NOTICE).
 
 ### From source or PyPI
 
@@ -239,6 +246,7 @@ script2subs/
   tools.py        reflow preview/apply with the verbatim guarantee
   errors.py       user-facing error type
   ui/             local HTTP server, desktop launcher, static SPA
+site/             static landing page (deploy to Cloudflare Pages)
 tests/            unit and integration tests (fixtures generated at runtime)
 ```
 

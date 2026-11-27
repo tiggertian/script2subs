@@ -58,6 +58,18 @@ if [ "${BUNDLE_AUTOSUBS:-0}" = "1" ]; then
   echo "   NOTE: MMS forced-alignment weights are CC BY-NC 4.0 (non-commercial) and are not bundled."
 fi
 
+# Adding the CLI wrapper (and any bundled files) invalidates the ad-hoc
+# signature PyInstaller wrote. On Apple Silicon an invalid seal makes macOS
+# report the app as "damaged"; re-sign ad-hoc so it launches (still unsigned,
+# so Gatekeeper will ask about an unidentified developer after quarantine).
+if command -v codesign >/dev/null 2>&1; then
+  codesign --force --deep --sign - "$APP" \
+    && echo ">> re-signed (ad-hoc) so the bundle is not reported as damaged" \
+    || echo ">> WARN: ad-hoc codesign failed; macOS may report the app as damaged"
+else
+  echo ">> WARN: codesign not found; install Xcode command line tools to re-sign"
+fi
+
 echo ">> built: $APP"
 echo ">> GUI:  open \"$APP\""
 echo ">> CLI:  \"$WRAP\" --version"

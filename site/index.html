@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Script2Subs — verbatim bilingual subtitles, timed to your narration</title>
+  <meta name="description" content="Timing hand-authored scripts to narration with AutoSubs. Verbatim bilingual subtitle export for DaVinci Resolve. macOS, free and open source.">
+  <meta property="og:title" content="Script2Subs">
+  <meta property="og:description" content="Verbatim bilingual subtitles, timed to your narration with AutoSubs.">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="nav">
+    <a class="brand" href="#">Script<span>2</span>Subs</a>
+    <nav>
+      <a href="#install">Install</a>
+      <a href="#features">Features</a>
+      <a href="https://github.com/tiggertian/script2subs">GitHub</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero">
+      <p class="eyebrow">Free · open source · macOS</p>
+      <h1>Verbatim bilingual subtitles,<br>timed to your narration.</h1>
+      <p class="lede">
+        You write the script, record the voice, and Script2Subs lines your
+        text up against the audio with AutoSubs — then exports
+        DaVinci&nbsp;Resolve-ready SRT in one language or two.
+        Your words are never rewritten.
+      </p>
+      <div class="cta">
+        <a id="download" class="btn" href="https://github.com/tiggertian/script2subs/releases/latest">
+          Download for macOS
+        </a>
+        <span id="download-meta" class="meta">Apple Silicon · unsigned (see install)</span>
+      </div>
+      <p class="tiny">
+        Requires <a href="https://github.com/tmoroney/auto-subs">AutoSubs</a>
+        for transcription — or bring your own SRT / timings JSON.
+      </p>
+    </section>
+
+    <section id="install" class="panel">
+      <h2>Install in about a minute</h2>
+      <ol class="steps">
+        <li>
+          <h3>Download &amp; drag</h3>
+          <p>Open the DMG and drag <strong>Script2Subs</strong> into Applications.</p>
+        </li>
+        <li>
+          <h3>Clear the unsigned-app flag</h3>
+          <p>The build isn't notarized yet, so first launch is blocked. Run this
+             once in Terminal, then open the app:</p>
+          <pre><code>xattr -dr com.apple.quarantine "/Applications/Script2Subs.app"</code></pre>
+          <p class="muted">If you see “unidentified developer,” right-click the app →
+             <strong>Open</strong> also works. A “damaged” message is the same
+             quarantine issue — the command above fixes it.</p>
+        </li>
+        <li>
+          <h3>Make subtitles</h3>
+          <p>Pick your narration and your scripts in the dashboard, then export
+             <code>bilingual.srt</code> straight into Resolve.</p>
+        </li>
+      </ol>
+    </section>
+
+    <section id="features" class="panel">
+      <h2>What it does</h2>
+      <div class="grid">
+        <div class="card">
+          <h3>Verbatim</h3>
+          <p>Your script text is never paraphrased or auto-corrected. Alignment
+             only decides <em>when</em> each line appears.</p>
+        </div>
+        <div class="card">
+          <h3>Bilingual by design</h3>
+          <p>Keep a primary and secondary script as a strict line-for-line pair
+             and get one stacked track with both languages in sync.</p>
+        </div>
+        <div class="card">
+          <h3>CJK-aware</h3>
+          <p>Character-based wrapping and punctuation-aware breaks for Chinese
+             and other CJK scripts, plus reading-speed checks.</p>
+        </div>
+        <div class="card">
+          <h3>One cue per line</h3>
+          <p>Re-flow at phrase boundaries instead of guessing breaks that split
+             words in half.</p>
+        </div>
+        <div class="card">
+          <h3>Review built in</h3>
+          <p>A local app plays the audio, highlights each cue, and flags lines
+             that are too fast or too long.</p>
+        </div>
+        <div class="card">
+          <h3>Resolve-ready</h3>
+          <p>Exports primary, secondary, and bilingual SRT plus a timing report,
+             with timecode offsets for non-zero timelines.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>
+      <a href="https://github.com/tiggertian/script2subs">Source</a> ·
+      MIT · built on <a href="https://github.com/tmoroney/auto-subs">AutoSubs</a>
+      (MIT). Script2Subs is an independent project, not affiliated with AutoSubs.
+    </p>
+  </footer>
+
+  <script src="app.js" defer></script>
+</body>
+</html>
