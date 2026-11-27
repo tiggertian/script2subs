@@ -1,0 +1,66 @@
+name: Release
+
+# Pushing a version tag (e.g. v0.2.1) builds the macOS app and publishes a
+# GitHub Release with the DMG + zip attached. Manual runs build the same
+# artifacts and stash them as a workflow artifact instead of a release.
+#
+#   git tag v0.2.1 && git push origin v0.2.1
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+    inputs:
+      bundle_autosubs:
+        description: "Embed the AutoSubs CLI in the app (~136 MB larger)"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Test
+        run: |
+          python -m pip install -e .
+          python -m unittest discover -s tests -v
+
+      - name: Build app, DMG and zip
+        env:
+          PYTHON: python3
+          BUNDLE_AUTOSUBS: ${{ inputs.bundle_autosubs && '1' || '0' }}
+        run: ./packaging/make_dist.sh
+
+      - name: Show artifacts
+        run: ls -lh dist/
+
+      - name: Publish GitHub release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist/*.dmg
+            dist/*.zip
+          generate_release_notes: true
+
+      - name: Upload artifacts (manual run)
+        if: github.event_name == 'workflow_dispatch'
+        uses: actions/upload-artifact@v4
+        with:
+          name: Script2Subs-macos-${{ runner.arch }}
+          path: |
+            dist/*.dmg
+            dist/*.zip

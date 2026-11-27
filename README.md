@@ -259,7 +259,15 @@ ln -sf "$PWD/dist/Script2Subs.app/Contents/MacOS/script2subs-cli" /usr/local/bin
 
 For release artifacts, run `./packaging/make_dist.sh` — it builds the app and
 writes a DMG (drag-to-Applications installer) plus a `.zip` under `dist/`, named
-with the version and architecture. Attach those to a GitHub release.
+with the version and architecture.
+
+Releases are automated: push a version tag and
+[`.github/workflows/release.yml`](.github/workflows/release.yml) builds on a
+macOS runner, runs the tests, and attaches the DMG + zip to the GitHub Release.
+
+```bash
+git tag v0.2.1 && git push origin v0.2.1
+```
 
 The build defaults to `python3.14` (override with `PYTHON=/path/to/python3.14`)
 and installs PyInstaller + pywebview into `.build-venv/`. The bundle includes
