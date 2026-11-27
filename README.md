@@ -233,6 +233,27 @@ examples/demo/    synthetic scripts + timings for the docs and CI
 tests/            unit and integration tests
 ```
 
+## Packaging a macOS app
+
+`packaging/build_app.sh` builds `dist/ScriptAlign.app` with PyInstaller. The
+bundle opens the dashboard on double-click **and** works as the `scriptalign`
+CLI — no Python needed on the target machine:
+
+```bash
+./packaging/build_app.sh                  # build dist/ScriptAlign.app
+open "dist/ScriptAlign.app"               # GUI dashboard
+dist/ScriptAlign.app/Contents/MacOS/scriptalign-cli --version   # CLI
+
+# optional: put the CLI on your PATH
+ln -sf "$PWD/dist/ScriptAlign.app/Contents/MacOS/scriptalign-cli" /usr/local/bin/scriptalign
+```
+
+The build defaults to `python3.14` (override with `PYTHON=/path/to/python3.14`)
+and installs PyInstaller + pywebview into `.build-venv/`. The bundle includes
+Python and the `ui/static` frontend, but **not** AutoSubs — install AutoSubs
+separately to transcribe. The app is unsigned; to share it, sign and notarize
+it with your Developer ID.
+
 ## Development
 
 ```bash
